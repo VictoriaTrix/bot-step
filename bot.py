@@ -4,6 +4,7 @@ from aiogram import Bot, Dispatcher, types
 from aiogram.types import(ReplyKeyboardMarkup,KeyboardButton,InlineKeyboardMarkup,InlineKeyboardButton)
 from aiogram.filters import Command 
 from aiogram.client.default import DefaultBotProperties
+from weather import get_weather
 from api import TOKEN
 
 bot = Bot(token=TOKEN, default=DefaultBotProperties(parse_mode="HTML"))
@@ -20,7 +21,7 @@ main_keyboard = ReplyKeyboardMarkup(
 inline_keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="Начать", callback_data="start")],
         [InlineKeyboardButton(text="Помощь", callback_data="help")],
-        [InlineKeyboardButton(text="Рандоиное число", callback_data="random")]
+        [InlineKeyboardButton(text="Рандомное число", callback_data="random")]
     ]
 )
 
@@ -49,6 +50,11 @@ async def help_command(message: types.message):
         "/help - Показывает список команд\n"
         "/random - Случайное число\n"
     )
+    await message.answer(command_text)
+@dp.message(Command("weather"))
+async def weather_command(message: types.message):
+    weather_info = await get_weather()
+    await message.reply (weather_info)
 
 @dp.message(lambda message: message.text == "Привет!")
 async def hello(message: types.Message):
